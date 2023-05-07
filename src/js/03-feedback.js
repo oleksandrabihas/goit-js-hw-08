@@ -4,7 +4,10 @@ const email = document.querySelector('input');
 const message = document.querySelector('textarea[name="message"]');
 const form = document.querySelector('form');
 const LOCALSTORAGE_KEY = 'feedback-form-state';
-const feedbackData = {};
+const feedbackData = {
+  email: '',
+  message: '',
+};
 
 function inputEmail(e) {
   e.preventDefault();
@@ -24,7 +27,7 @@ function saveFeedbackData() {
 
 function loadFeedbackData() {
   const savedData = localStorage.getItem(LOCALSTORAGE_KEY);
-  if (savedData) {
+  if (savedData !== null && savedData !== undefined) {
     const parsedData = JSON.parse(savedData);
     feedbackData.email = parsedData.email || '';
     feedbackData.message = parsedData.message || '';
@@ -37,17 +40,28 @@ function updateForm() {
 }
 
 function resetForm() {
-  feedbackData.email = '';
-  feedbackData.message = '';
-  saveFeedbackData();
+  if (email.value !== '' || message.value !== '') {
+    saveFeedbackData();
+  }
   updateForm();
+  form.reset();
+  localStorage.removeItem(LOCALSTORAGE_KEY);
 }
 
 function onFormSubmit(e) {
   e.preventDefault();
-  console.log(
-    `email: ${feedbackData.email}; message: ${feedbackData.email.message}`
-  );
+  if (email.value === '' || message.value === '') {
+    alert(`Всі поля повинні бути заповненні`);
+  } else {
+    const emailValue = feedbackData.email;
+    const messageValue = feedbackData.message;
+
+    const arrayData = {
+      email: emailValue,
+      message: messageValue,
+    };
+    console.log(arrayData);
+  }
   resetForm();
 }
 

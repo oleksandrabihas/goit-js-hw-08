@@ -11,7 +11,7 @@ function saveTimeUp(e) {
     const savedTime = JSON.parse(
       localStorage.getItem('videoplayer-current-time')
     );
-    player.setCurrentTime(savedTime);
+    player.setCurrentTime(savedTime || 0);
 
 player.on('timeupdate', throttle(saveTimeUp, 1000));
 
