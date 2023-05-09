@@ -9,15 +9,10 @@ const feedbackData = {
   message: '',
 };
 
-function inputEmail(e) {
+function inputData(e) {
   e.preventDefault();
-  feedbackData.email = e.target.value;
-  saveFeedbackData();
-}
-
-function inputMessage(e) {
-  e.preventDefault();
-  feedbackData.message = e.target.value;
+  feedbackData.email = email.value;
+  feedbackData.message = message.value;
   saveFeedbackData();
 }
 
@@ -26,11 +21,15 @@ function saveFeedbackData() {
 }
 
 function loadFeedbackData() {
-  const savedData = localStorage.getItem(LOCALSTORAGE_KEY);
-  if (savedData !== null && savedData !== undefined) {
-    const parsedData = JSON.parse(savedData);
-    feedbackData.email = parsedData.email || '';
-    feedbackData.message = parsedData.message || '';
+  try {
+    const savedData = localStorage.getItem(LOCALSTORAGE_KEY);
+    if (savedData !== null && savedData !== undefined) {
+      const parsedData = JSON.parse(savedData);
+      feedbackData.email = parsedData.email || '';
+      feedbackData.message = parsedData.message || '';
+    }
+  } catch (error) {
+    console.error('Помилка зчитування даних з localStorage:', error);
   }
 }
 
@@ -39,34 +38,18 @@ function updateForm() {
   message.value = feedbackData.message;
 }
 
-function resetForm() {
-  if (email.value !== '' || message.value !== '') {
-    saveFeedbackData();
-  }
-  updateForm();
-  form.reset();
-  localStorage.removeItem(LOCALSTORAGE_KEY);
-}
-
 function onFormSubmit(e) {
   e.preventDefault();
   if (email.value === '' || message.value === '') {
     alert(`Всі поля повинні бути заповненні`);
   } else {
-    const emailValue = feedbackData.email;
-    const messageValue = feedbackData.message;
-
-    const arrayData = {
-      email: emailValue,
-      message: messageValue,
-    };
-    console.log(arrayData);
+    console.log(feedbackData);
   }
-  resetForm();
+  localStorage.removeItem(LOCALSTORAGE_KEY);
+  form.reset();
 }
 
-email.addEventListener('input', throttle(inputEmail, 500));
-message.addEventListener('input', throttle(inputMessage, 500));
+form.addEventListener('input', throttle(inputData, 500));
 form.addEventListener('submit', onFormSubmit);
 
 loadFeedbackData();
